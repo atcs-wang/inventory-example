@@ -54,4 +54,12 @@ npm run start
 
 Note: You can run TSLint and the TypeScript compiler without starting the Node.js server using `npm run build`.
 
+# TypeScript errors
+
+Updated the `index.ts` to address some linter/compiler errors.
+
+Update your project with some TypeScript declaration files so that TypeScript can use the type declarations for Node.js and Express.
+```
+npm install --save-dev @types/node @types/express
+```
 

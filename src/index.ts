@@ -1,4 +1,5 @@
-const express = require( "express" );
+// TypeScript prefers to use the import module syntax over require
+import express from "express";
 const app = express();
 const port = 8080; // default port to listen
 
@@ -9,5 +10,7 @@ app.get( "/", ( req, res ) => {
 
 // start the Express server
 app.listen( port, () => {
+    // TypeScript doesn't like console.log in production code.
+    // tslint:disable-next-line:no-console
     console.log( `server started at http://localhost:${ port }` );
 } );
