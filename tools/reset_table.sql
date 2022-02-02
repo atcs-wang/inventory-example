@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS `stuff`;
+
+CREATE TABLE IF NOT EXISTS `inventory_sample`.`stuff` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` VARCHAR(45) NULL DEFAULT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `quantity` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+  

@@ -156,3 +156,22 @@ Changes are made to `src/routes/index.ts` that provide at render time a "context
 The new nav bar is in a file called `nav.ejs`, in a new folder called `partials` in `views`. Notice the use of the embedded JS to incorporate the data into the HTML and/or control the HTML used.
 
 Both `index.ejs` and `stuff.ejs` have a new line that includes the `nav` partial.
+
+# Adding a mysql database
+Install the `mysql` library.
+```
+npm install mysql 
+npm install --save-dev @types/mysql
+```
+
+
+Set up a new MySQL schema in a local/remote database.
+
+Put the information in the `.env` file.
+
+The model/forward engineer code is in the `db_setup` folder.
+
+A convenient "reset" script is is in `tools/reset_table.sql`. To run it, the `mysql` module is invoked in `tools/initdb.ts`, a stand-alone script.
+The package.json is updated to run the script on `npm run initdb`
+
+Lastly, we set up a easy-to-use module for database queries in `src.db/db.ts`, which sets up a connection pool and exports both a standard query method (callback style) and a promisified query method.
