@@ -1,25 +1,25 @@
-// import * as express from "express";
+import * as express from "express";
+// requiresAuth allowed you to require authentication for specific routes
+import { requiresAuth } from 'express-openid-connect';
 
-// export const register = ( app: express.Application ) => {
+export const register = ( app: express.Application ) => {
 
-//     // define a route handler for the default home page
-//     app.get( "/", ( req: any, res ) => {
-//         res.render( "index" );
-//     } );
+    // define a route handler for the default home page
+    app.get( "/", ( req: any, res ) => {
+        res.render( "index" );
+    } );
 
-//     // define a secure route handler for the login page that redirects to /guitars
-//     app.get( "/login", oidc.ensureAuthenticated(), ( req, res ) => {
-//         res.redirect( "/guitars" );
-//     } );
+    // define a secure route handler for the guitars page
+    app.get( "/stuff", requiresAuth() , ( req: any, res ) => {
+        res.render( "stuff" );
+    } );
 
-//     // define a route to handle logout
-//     app.get( "/logout", ( req: any, res ) => {
-//         req.logout();
-//         res.redirect( "/" );
-//     } );
+        // Can check state of authentication in a route
+    app.get("/testauth", (req, res) => {
+        res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+    })
 
-//     // define a secure route handler for the guitars page
-//     app.get( "/guitars", oidc.ensureAuthenticated(), ( req: any, res ) => {
-//         res.render( "guitars" );
-//     } );
-// };
+    app.get('/profile', requiresAuth(), (req, res) => {
+        res.send(JSON.stringify(req.oidc.user));
+      });
+};

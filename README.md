@@ -139,4 +139,10 @@ Note that to use Social Identity Providers (Facebook, Google, etc) in production
 
 ## Refactor routes
 
+A new view `stuff.ejs` is added.
+
+New `src\routes\index.ts` moves all the routing code from `src/index.ts` into a separate place; a new auth-protected route for the `stuff` view is added. 
+
+
+
 

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import * as sessionAuth from "./middleware/sessionAuth";
-
+import * as routes from "./routes";
 
 // initialize configuration
 dotenv.config();
@@ -21,23 +21,8 @@ app.set( "view engine", "ejs" );
 // Configure session auth
 sessionAuth.register( app );
 
-// define a route handler for the default home page
-app.get( "/", ( req, res ) => {
-    // render the index template
-    res.render( "index" );
-} );
-
-// Can check state of authentication in a route
-app.get("/testauth", (req, res) => {
-    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-})
-
-// requiresAuth allowed you to require authentication for specific routes
-import { requiresAuth } from 'express-openid-connect';
-
-app.get('/profile', requiresAuth(), (req, res) => {
-    res.send(JSON.stringify(req.oidc.user));
-  });
+// Configure routes
+routes.register( app );
 
 // start the Express server
 app.listen( port, () => {
