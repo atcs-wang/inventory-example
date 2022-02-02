@@ -143,6 +143,16 @@ A new view `stuff.ejs` is added.
 
 New `src\routes\index.ts` moves all the routing code from `src/index.ts` into a separate place; a new auth-protected route for the `stuff` view is added. 
 
+# Add Nav Menu w/ user profile info
 
+The `express-openid-connect` middleware automatically attaches  an `oidc` context object to every request. This includes a `user` object with information and `isAuthenticated()`. 
 
+These were previously demonstrated by the `testauth` and `profile` routes. 
 
+Now, we add a nav bar that includes user-specific information if you're logged in. 
+
+Changes are made to `src/routes/index.ts` that provide at render time a "context" object to the view engine, which the views can access. 
+
+The new nav bar is in a file called `nav.ejs`, in a new folder called `partials` in `views`. Notice the use of the embedded JS to incorporate the data into the HTML and/or control the HTML used.
+
+Both `index.ejs` and `stuff.ejs` have a new line that includes the `nav` partial.
