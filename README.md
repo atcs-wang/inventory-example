@@ -63,3 +63,33 @@ Update your project with some TypeScript declaration files so that TypeScript ca
 npm install --save-dev @types/node @types/express
 ```
 
+# Build a Better User Interface with Materialize and EJS
+
+Adding Materialize and EJS.
+Install EJS with:
+```
+npm install ejs
+```
+
+Add new folder in `src` called `views`, and a file called `index.ejs`.
+
+Updated `index.ts` with code to use EJS as the view engine and render the index template for the home page.
+
+Install more modules and TypeScript declarations needed to copy other types of files from src to dist:
+```
+npm install --save-dev ts-node shelljs fs-extra nodemon rimraf npm-run-all
+npm install --save-dev @types/fs-extra @types/shelljs
+```
+
+Added a folder called `tools` and a new script called `copyAssets.ts`
+
+## Update npm scripts
+
+Update the scripts in `package.json`.
+
+Finally, run with:
+
+```
+npm run dev
+```
+
