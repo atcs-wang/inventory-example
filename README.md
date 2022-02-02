@@ -93,3 +93,14 @@ Finally, run with:
 npm run dev
 ```
 
+
+# Configuration Settings with Node.js
+
+Instead of environment variables, use dotenv.
+
+```
+npm install dotenv
+npm install --save-dev @types/dotenv
+```
+
+Create a `.env` file.
