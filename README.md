@@ -104,3 +104,39 @@ npm install --save-dev @types/dotenv
 ```
 
 Create a `.env` file.
+
+# Adding Authentication with Auth0
+
+Auth0.com has a great free tier.
+
+Create an Application for a "Regular Web Application", "Node.js (Express)", and "Integrate Now".
+
+In the `Configure Auth0` section, simply update the port from 3000 to 8080 for configuring Auth0:
+Allowed Callback URL should include http://localhost:8080/callback and use the default Allowed Logout URLs of http://localhost:8080.
+
+Install express-openid-connect.
+```
+npm install express express-openid-connect --save
+```
+It seems TypeScript support for express-openid-connect is limited.
+
+In the `Integrate the SDK` section, note the relevant information but do not copy the code.
+
+A similar but nonidentical basic setup for integration is added in:
+1. the new `src/middleware/sessionAuth.ts` file, 
+2. the new lines in `src/index.ts`,
+3. the new settings in `.env` using the relevant information.
+
+Test the logging in process by going to the `localhost:8080/login` route. You should be redirected to Auth0's login box. After logging in, you should be redirected back to the homepage. 
+
+You can log out by going to `localhost:8080/logout`, which also redirects back to the home page.
+
+Check out both the `testauth` route and the `profile` route. The profile route will require you to login before accessing. The `testauth` will simply report on your logged in/out status.
+
+Read more about usage of the `express-openid-connect` library here: https://github.com/auth0/express-openid-connect/blob/master/EXAMPLES.md#2-require-authentication-for-specific-routes
+
+Note that to use Social Identity Providers (Facebook, Google, etc) in production, you will eventually need to register the app with the relevant Identity Provider to get a Client ID/Secret for the provider. Auth0 for now provides its own developer keys for convenience in development/testing.
+
+## Refactor routes
+
+
