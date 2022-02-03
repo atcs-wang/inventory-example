@@ -11,8 +11,96 @@
 <body>
     <%- include('partials/nav.ejs') %>
     <div class="container">
-        <h1 class="header">Stuff Inventory</h1>
-        <p>Your future list of stuff!</p>
+        <div id="app">
+            <div class="row" id="stuffList">
+                <h3>Stuff list</h3>
+                <% if (stuff) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(let i=0; i < stuff.length; i++) { %>
+                        <tr>
+                            <td><%= stuff[i].name %></td>
+                            <td><%= stuff[i].quantity %></td>
+                            <td>
+                                <button id="stuffDelete" onclick="window.alert('Delete <%= stuff[i].id %>')" class="btn-small"><i class="material-icons right">delete</i>Delete</button>
+                            </td>
+                        <% } %>
+
+                        </tr>
+                    </tbody>
+                </table>
+                <% }  else {%>
+                    <p>No stuff yet!</p>
+                <% } %>
+            </div>
+            <div class="row" id="stuffEdit">
+                <h3>Add stuff</h3>
+                <form class="col s12" action="/api/stuff/add" method="POST">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <label for="name">Item Name:</label>
+                            <input type="text" name="name" class="validate" data-length="32" required>
+                        </div>
+                        <div class="input-field col s6">
+                            <label for="quantity">Item Quantity:</label>
+                            <input type="number" name="quantity" value=1 required>
+                        </div>
+                    </div>
+                    <button id="stuffEditSubmit" class="btn" type="submit"><i class="material-icons right">send</i>Submit</button>
+                </form>
+            </div>
+            <!-- <div id="deleteConfirm" ref="deleteConfirm" class="modal">
+                <div class="modal-content">
+                    <h4>Confirm delete</h4>
+                    <p>Delete {{ selectedStuff }}?</p>
+                </div>
+                <div class="modal-footer">
+                    <button @click="deleteStuff(selectedStuffId)" class="modal-close btn-flat">Ok</button>
+                    <button class="modal-close btn-flat">Cancel</button>
+                </div>
+            </div> -->
+        </div>
     </div>
+    <script src="/js/formFetch.js"></script>
+
+    <script>
+        // async function loadStuff() {
+        //     let stuff = await fetch('/api/stuff/all').then(response => response.json())
+        //     console.log(stuff);
+        //     document.querySelector("tbody").replaceChildren()
+        //     stuff.forEach( ({id, name, quantity}) => {
+        //         let tr = document.createElement("tr");
+        //         tr.innerHTML = 
+        //         `
+        //         <td>${name}</td>
+        //         <td>${quantity}</td>
+        //         <td>
+        //             <button id="stuffDelete" onclick="window.alert('Delete ${id}')" class="btn-small"><i class="material-icons right">delete</i>Delete</button>
+        //         </td>
+        //         `
+        //         return tr;
+        //     })
+        //     )
+        // }
+        
+        document.querySelector("form").addEventListener("submit",
+            (event) => handleFormSubmit(event)
+            .then(data => window.location.reload(true))// loadStuff())
+            .catch(err => window.alert(err))
+        );
+    </script>
+
+    <!-- Compiled and minified Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+                
+    <!-- initialize Materialize elements -->
+    <script> M.AutoInit();</script>
 </body>
 </html>
