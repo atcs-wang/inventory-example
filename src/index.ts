@@ -17,6 +17,8 @@ const app = express();
 app.use( express.json() );
 // Configure Express to parse URL-encoded POST request bodies (traditional forms)
 app.use( express.urlencoded({ extended: false }) );
+// Configure Express to serve static files in the public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Configure Express to use EJS
 app.set( "views", path.join( __dirname, "views" ) );

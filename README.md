@@ -195,6 +195,19 @@ npm install morgan
 npm install --save-dev @types/morgan
 ```
 
-The new view `src/views/apiTester.ejs` allows for testing each of the API endpoints from the browser.
+The new view `src/views/apiTester.ejs` allows for testing each of the API endpoints from the browser. Note the use of fetch statements to perform AJAX calls, hitting the endpoints without redirecting to a new page.
 
-The first naive implementation just uses the default form submit.
+The first naive implementation of the `apiTester` just uses the default form submit, so the `add` and `update` endpoints do, in fact, cause page redirection.
+
+# Using fetch for forms
+
+The second implementation of `apiTester` overrides the default form submit behavior, using fetch instead. 
+
+It uses the helper functions in `public/js/formFetch.js`, which are taken and lightly altered from this blog post: //https://simonplend.com/how-to-use-fetch-to-post-form-data-as-json-to-your-api/
+        
+## Serving static files
+
+To serve static files in the public folder, the `src/index.ts` adds a new line of middleware.
+
+`tools/copyAssets.ts` and the nodemon scripts in `package.json` were also updated to copy over and track files in the `public` folder. (The tracking only added js files for now)
+
