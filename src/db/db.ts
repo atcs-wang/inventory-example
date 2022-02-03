@@ -7,11 +7,11 @@ dotenv.config()
 
 const dbConfig : mysql.PoolConfig = {
   host: process.env.DB_HOST || "localhost",
-  port: parseInt(process.env.DB_PORT || "3306", undefined),
+  port: parseInt(process.env.DB_PORT || "3306", 10),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT || "10000", undefined)
+  connectTimeout: parseInt(process.env.DB_CONNECT_TIMEOUT || "10000", 10)
 }
 
 // Make a connection pool, instead of just a single connection

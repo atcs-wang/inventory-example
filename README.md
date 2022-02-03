@@ -177,4 +177,6 @@ The package.json is updated to run the script on `npm run initdb`
 # Using the database
 We set up an easy-to-use module for database queries in `src.db/db.ts`, which sets up a connection pool and exports both a standard query method in callback style (queryCallback) and a promisified query method (queryPromise).
 
-We can use these to make simple queries 
+We can use these to make simple queries. The new Express router in the `src/routes/api.ts` adds two simple api endpoints demonstrating how both of these query methods work. 
+
+The router is added to handle all "api/" routes in `src/routes/index.ts`, with authorization required.
