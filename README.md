@@ -174,4 +174,7 @@ The model/forward engineer code is in the `db_setup` folder.
 A convenient "reset" script is is in `tools/reset_table.sql`. To run it, the `mysql` module is invoked in `tools/initdb.ts`, a stand-alone script.
 The package.json is updated to run the script on `npm run initdb`
 
-Lastly, we set up a easy-to-use module for database queries in `src.db/db.ts`, which sets up a connection pool and exports both a standard query method (callback style) and a promisified query method.
+# Using the database
+We set up an easy-to-use module for database queries in `src.db/db.ts`, which sets up a connection pool and exports both a standard query method in callback style (queryCallback) and a promisified query method (queryPromise).
+
+We can use these to make simple queries 

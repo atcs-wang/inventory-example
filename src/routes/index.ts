@@ -1,7 +1,7 @@
 import * as express from "express";
 // requiresAuth allowed you to require authentication for specific routes
 import { requiresAuth } from 'express-openid-connect';
-
+import {router as apiRouter} from './api'
 export const register = ( app: express.Application ) => {
 
     // define a route handler for the default home page
@@ -21,7 +21,8 @@ export const register = ( app: express.Application ) => {
     //     res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
     // })
 
-    // app.get('/profile', requiresAuth(), (req, res) => {
-    //     res.send(JSON.stringify(req.oidc.user));
-    //   });
+    app.get('/profile', requiresAuth(), (req, res) => {
+        res.send(JSON.stringify(req.oidc.user));
+      });
+    app.use("/api", requiresAuth() ,apiRouter);
 };
