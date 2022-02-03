@@ -164,7 +164,6 @@ npm install mysql
 npm install --save-dev @types/mysql
 ```
 
-
 Set up a new MySQL schema in a local/remote database.
 
 Put the information in the `.env` file.
@@ -174,9 +173,28 @@ The model/forward engineer code is in the `db_setup` folder.
 A convenient "reset" script is is in `tools/reset_table.sql`. To run it, the `mysql` module is invoked in `tools/initdb.ts`, a stand-alone script.
 The package.json is updated to run the script on `npm run initdb`
 
-# Using the database
+# Using the database: an API
 We set up an easy-to-use module for database queries in `src.db/db.ts`, which sets up a connection pool and exports both a standard query method in callback style (queryCallback) and a promisified query method (queryPromise).
 
-We can use these to make simple queries. The new Express router in the `src/routes/api.ts` adds two simple api endpoints demonstrating how both of these query methods work. 
+The promisifying is done with the util module:
+```
+npm install util
+npm install --save-dev @types/util.promisify
+```
+
+We can use these to make simple queries. The new Express router in the `src/routes/api.ts` adds two simple api GET endpoints demonstrating how both of these query methods work. 
+
+More api POST and DELETE endpoints are also implemented. 
 
 The router is added to handle all "api/" routes in `src/routes/index.ts`, with authorization required.
+# Testing the API endpoints:
+
+Several layers of middleware are added in `src/index.ts` to parse request bodies sent by forms. Also, a HTTP request/response logging middleware called Morgan is added (but only for development):
+```
+npm install morgan 
+npm install --save-dev @types/morgan
+```
+
+The new view `src/views/apiTester.ejs` allows for testing each of the API endpoints from the browser.
+
+The first naive implementation just uses the default form submit.

@@ -21,7 +21,6 @@ const pool = mysql.createPool(dbConfig);
 // This is a shortcut for the pool.getConnection() -> connection.query() -> connection.release()
 // More efficient use of db connections might do multiple queries on one connection before closing,
 // but this is not super important for small applications.
-
 export const queryCallback = pool.query.bind(pool);
 // This makes a promise-style wrapper for the query() method
-export const queryPromise = util.promisify(pool.query).bind(pool);
+export const queryPromise = util.promisify(pool.query).bind(pool) as ((options: string | mysql.QueryOptions, values?: any | undefined) => Promise<any>);

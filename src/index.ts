@@ -2,6 +2,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
+import morgan from "morgan"
 import * as sessionAuth from "./middleware/sessionAuth";
 import * as routes from "./routes";
 
@@ -12,10 +13,19 @@ dotenv.config();
 const port = process.env.SERVER_PORT;
 
 const app = express();
+// Configure Express to parse incoming JSON data
+app.use( express.json() );
+// Configure Express to parse URL-encoded POST request bodies (traditional forms)
+app.use( express.urlencoded({ extended: false }) );
 
 // Configure Express to use EJS
 app.set( "views", path.join( __dirname, "views" ) );
 app.set( "view engine", "ejs" );
+
+// Show routes called in console during development
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
 
 
 // Configure session auth

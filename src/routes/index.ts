@@ -24,5 +24,6 @@ export const register = ( app: express.Application ) => {
     app.get('/profile', requiresAuth(), (req, res) => {
         res.send(JSON.stringify(req.oidc.user));
       });
+
     app.use("/api", requiresAuth() ,apiRouter);
 };
