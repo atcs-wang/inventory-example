@@ -211,3 +211,12 @@ To serve static files in the public folder, the `src/index.ts` adds a new line o
 
 `tools/copyAssets.ts` and the nodemon scripts in `package.json` were also updated to copy over and track files in the `public` folder. (The tracking only added js files for now)
 
+
+# Implemented "stuff" page
+
+The `views/stuff.ejs` page is implemented to both use SSR for its initial layout (using EJS to inject) and AJAX calls with `fetch` and vanilla JS DOM manipulation for actions going forward, including adding, deleting, and searching for stuff.
+
+Note that the `routes/index.ts` page utilizes a call to the database to get data for the initial SSR rendering.
+
+
+
