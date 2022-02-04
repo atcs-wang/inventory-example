@@ -69,8 +69,6 @@ router.get("/stuff/find/:search", async (req:any, res, next) => {
 });
 
 router.post("/stuff/add", async (req: any, res, next) => {
-    // tslint:disable-next-line:no-console
-    console.log(req.body);
     try {
         const results = await db.queryPromise(`
             INSERT INTO stuff

@@ -10,7 +10,7 @@ import * as routes from "./routes";
 dotenv.config();
 // port is now available to the Node.js runtime
 // as if it were an environment variable
-const port = process.env.SERVER_PORT;
+const port = process.env.PORT;
 
 const app = express();
 // Configure Express to parse incoming JSON data

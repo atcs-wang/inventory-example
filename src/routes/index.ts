@@ -24,8 +24,7 @@ export const register = ( app: express.Application ) => {
                 FROM stuff
                 WHERE user_id = ?
             `, [req.oidc.user.email]);
-            // tslint:disable-next-line:no-console
-            console.log(stuff);
+
             res.render( "stuff" , {isAuthenticated: req.oidc.isAuthenticated(), user, stuff});
         } catch (err) {
             // tslint:disable-next-line:no-console
