@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Stuff Inventory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <%- include('partials/nav.ejs') %>
+    <div class="container">
+        <h1 class="header">API Tester</h1>
+        <h2 class="header">GET /api/stuff/all</h2>
+        <button class="submit btn getAll">GET /api/stuff/all</button>
+        <textarea class="getAll"></textarea>
+
+        <h2 class="header">GET /api/stuff/total</h2>
+        <button class="submit btn getTotal"f>GET /api/stuff/total</button>
+        <textarea class="getTotal"></textarea>
+
+        <h2 class="header">GET /api/stuff/find/:search</h2>
+        <div class="input-field">
+            <label for="getFind">Search:</label>
+            <input type="text" class="getFind" name="getFind">
+        </div>
+        <button class="submit btn getFind">GET /api/stuff/find/:search</button>
+        <textarea class="getFind"></textarea>
+        
+        <h2 class="header">POST /api/stuff/add</h2>
+
+        <form class="postAdd" action="/api/stuff/add" method="POST">
+            <div class="input-field">
+                <label for="name">Item Name:</label>
+                <input type="text" name="name" class="validate" data-length="32" required>
+            </div>
+            <div class="input-field">
+                <label for="quantity">Item Quantity:</label>
+                <input type="number" name="quantity">
+            </div>
+            <button class="submit btn" type="submit">POST /api/stuff/add</button>
+        </form>
+        <textarea class="postAdd"></textarea>
+
+        <h2 class="header">POST /api/stuff/update</h2>
+
+        <form class="postUpdate" action="/api/stuff/update" method="POST">
+            <div class="input-field">
+                <label for="id">Item Id:</label>
+                <input type="number" name="id" required>
+            </div>
+            <div class="input-field">
+                <label for="name">Updated Name:</label>
+                <input type="text" name="name" class="validate" data-length="32" required>
+            </div>
+            <div class="input-field">
+                <label for="quantity">Updated Quantity:</label>
+                <input type="number" name="quantity">
+            </div>
+            <button class="submit btn" type="submit">POST /api/stuff/add</button>
+        </form>
+        <textarea class="postUpdate"></textarea>
+
+        
+
+        <h2 class="header">DELETE /api/stuff/remove/:id</h2>
+        <div class="input-field">
+            <label for="id">Item Id:</label>
+            <input type="number" name="id" class="delete" required>
+        </div>
+        <button class="submit btn delete">DELETE /api/stuff/remove/:id</button>
+        <textarea class="delete"></textarea>
+    </div>
+
+    <script src="/js/formFetch.js"></script>
+
+    <script>
+        document.querySelector("button.getAll").onclick =  () => {
+            fetch('/api/stuff/all')
+            .then(response => response.json())
+            .then(data => document.querySelector("textarea.getAll").value = JSON.stringify(data))
+            .catch(err => document.querySelector("textarea.getAll").value = err);
+        }
+
+        document.querySelector("button.getTotal").onclick =  () => {
+            fetch('/api/stuff/total')
+            .then(response => response.json())
+            .then(data => document.querySelector("textarea.getTotal").value = JSON.stringify(data))
+            .catch(err => document.querySelector("textarea.getTotal").value = err);
+        }
+
+        document.querySelector("button.getFind").onclick =  () => {
+            let search = document.querySelector("input.getFind").value
+            if (!search)
+                return;
+            fetch('/api/stuff/find/' + search)
+            .then(response => response.json())
+            .then(data => document.querySelector("textarea.getFind").value = JSON.stringify(data))
+            .catch(err => document.querySelector("textarea.getFind").value = err);
+        }
+
+        document.querySelector("button.delete").onclick =  () => {
+            let id = document.querySelector("input.delete").value
+            if (!id)
+                return;
+            fetch('/api/stuff/remove/' + id,{method:"delete"})
+            .then(response => response.json())
+            .then(data => document.querySelector("textarea.delete").value = JSON.stringify(data))
+            .catch(err => document.querySelector("textarea.delete").value = err);
+        }
+
+        document.querySelector("form.postAdd").addEventListener("submit", 
+            (event) => handleFormSubmit(event)
+            .then(data => document.querySelector("textarea.postAdd").value = JSON.stringify(data))
+            .catch(err => document.querySelector("textarea.postAdd").value = err)
+        );
+
+        document.querySelector("form.postUpdate").addEventListener("submit", 
+            (event) => handleFormSubmit(event)
+            .then(data => document.querySelector("textarea.postUpdate").value = JSON.stringify(data))
+            .catch(err => document.querySelector("textarea.postUpdate").value = err)
+        );
+
+
+    </script>
+
+    
+    <!-- Compiled and minified Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+            
+    <!-- initialize Materialize elements -->
+    <script> M.AutoInit();</script>
+</body>
+</html>

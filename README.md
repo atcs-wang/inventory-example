@@ -156,3 +156,58 @@ Changes are made to `src/routes/index.ts` that provide at render time a "context
 The new nav bar is in a file called `nav.ejs`, in a new folder called `partials` in `views`. Notice the use of the embedded JS to incorporate the data into the HTML and/or control the HTML used.
 
 Both `index.ejs` and `stuff.ejs` have a new line that includes the `nav` partial.
+
+# Adding a mysql database
+Install the `mysql` library.
+```
+npm install mysql 
+npm install --save-dev @types/mysql
+```
+
+Set up a new MySQL schema in a local/remote database.
+
+Put the information in the `.env` file.
+
+The model/forward engineer code is in the `db_setup` folder.
+
+A convenient "reset" script is is in `tools/reset_table.sql`. To run it, the `mysql` module is invoked in `tools/initdb.ts`, a stand-alone script.
+The package.json is updated to run the script on `npm run initdb`
+
+# Using the database: an API
+We set up an easy-to-use module for database queries in `src.db/db.ts`, which sets up a connection pool and exports both a standard query method in callback style (queryCallback) and a promisified query method (queryPromise).
+
+The promisifying is done with the util module:
+```
+npm install util
+npm install --save-dev @types/util.promisify
+```
+
+We can use these to make simple queries. The new Express router in the `src/routes/api.ts` adds two simple api GET endpoints demonstrating how both of these query methods work. 
+
+More api POST and DELETE endpoints are also implemented. 
+
+The router is added to handle all "api/" routes in `src/routes/index.ts`, with authorization required.
+# Testing the API endpoints:
+
+Several layers of middleware are added in `src/index.ts` to parse request bodies sent by forms. Also, a HTTP request/response logging middleware called Morgan is added (but only for development):
+```
+npm install morgan 
+npm install --save-dev @types/morgan
+```
+
+The new view `src/views/apiTester.ejs` allows for testing each of the API endpoints from the browser. Note the use of fetch statements to perform AJAX calls, hitting the endpoints without redirecting to a new page.
+
+The first naive implementation of the `apiTester` just uses the default form submit, so the `add` and `update` endpoints do, in fact, cause page redirection.
+
+# Using fetch for forms
+
+The second implementation of `apiTester` overrides the default form submit behavior, using fetch instead. 
+
+It uses the helper functions in `public/js/formFetch.js`, which are taken and lightly altered from this blog post: //https://simonplend.com/how-to-use-fetch-to-post-form-data-as-json-to-your-api/
+        
+## Serving static files
+
+To serve static files in the public folder, the `src/index.ts` adds a new line of middleware.
+
+`tools/copyAssets.ts` and the nodemon scripts in `package.json` were also updated to copy over and track files in the `public` folder. (The tracking only added js files for now)
+
