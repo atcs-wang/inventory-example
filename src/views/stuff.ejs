@@ -15,27 +15,27 @@
             <div class="row" id="stuffList">
                 <h3>Stuff list</h3>
                 <% if (stuff) { %>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Quantity</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(let i=0; i < stuff.length; i++) { %>
-                        <tr>
-                            <td><%= stuff[i].name %></td>
-                            <td><%= stuff[i].quantity %></td>
-                            <td>
-                                <button id="stuffDelete" onclick="window.alert('Delete <%= stuff[i].id %>')" class="btn-small"><i class="material-icons right">delete</i>Delete</button>
-                            </td>
-                        <% } %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Quantity</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i=0; i < stuff.length; i++) { %>
+                            <tr data-id='<%- stuff[i].id %>'>
+                                <td><%= stuff[i].name %></td>
+                                <td><%= stuff[i].quantity %></td>
+                                <td>
+                                    <button onclick="confirmDeleteStuff(<%- stuff[i].id %>)" class="btn-small"><i class="material-icons right">delete</i>Delete</button>
+                                </td>
+                            <% } %>
 
-                        </tr>
-                    </tbody>
-                </table>
+                            </tr>
+                        </tbody>
+                    </table>
                 <% }  else {%>
                     <p>No stuff yet!</p>
                 <% } %>
@@ -56,45 +56,71 @@
                     <button id="stuffEditSubmit" class="btn" type="submit"><i class="material-icons right">send</i>Submit</button>
                 </form>
             </div>
-            <!-- <div id="deleteConfirm" ref="deleteConfirm" class="modal">
+            <div class="modal deleteConfirm">
                 <div class="modal-content">
                     <h4>Confirm delete</h4>
-                    <p>Delete {{ selectedStuff }}?</p>
+                    <p>Delete <span id="deleteConfirmStuff">stuff</span></p>
                 </div>
                 <div class="modal-footer">
-                    <button @click="deleteStuff(selectedStuffId)" class="modal-close btn-flat">Ok</button>
+                    <button class="modal-close btn-flat deleteConfirm">Ok</button>
                     <button class="modal-close btn-flat">Cancel</button>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
     <script src="/js/formFetch.js"></script>
 
     <script>
-        // async function loadStuff() {
-        //     let stuff = await fetch('/api/stuff/all').then(response => response.json())
-        //     console.log(stuff);
-        //     document.querySelector("tbody").replaceChildren()
-        //     stuff.forEach( ({id, name, quantity}) => {
-        //         let tr = document.createElement("tr");
-        //         tr.innerHTML = 
-        //         `
-        //         <td>${name}</td>
-        //         <td>${quantity}</td>
-        //         <td>
-        //             <button id="stuffDelete" onclick="window.alert('Delete ${id}')" class="btn-small"><i class="material-icons right">delete</i>Delete</button>
-        //         </td>
-        //         `
-        //         return tr;
-        //     })
-        //     )
-        // }
+        function repopulateTable(stuff){
+            const table = document.querySelector("table");
+            table.replaceChildren(); //clear table
+            stuff.forEach( ({id, name, quantity}) => {
+                var row = table.insertRow(-1);
+                row.dataset.id = id;
+                row.insertCell(0).innerHTML = name;
+                row.insertCell(1).innerHTML = quantity;
+                row.insertCell(2).innerHTML = `<button onclick="confirmDeleteStuff(${id})" class="btn-small"><i class="material-icons right">delete</i>Delete</button>`
+            });
+        }
+
+        async function loadStuff() {
+            try {
+                let stuff = await fetch('/api/stuff/all').then(response => response.json());
+                repopulateTable(stuff);
+            } catch (err) {
+                console.error(err);
+            }
+        }
         
         document.querySelector("form").addEventListener("submit",
             (event) => handleFormSubmit(event)
-            .then(data => window.location.reload(true))// loadStuff())
-            .catch(err => window.alert(err))
+            .then(data => loadStuff()) // window.location.reload(true))
+            .catch(err => console.error(err))
         );
+
+        function confirmDeleteStuff(id) {
+            const rowToDelete =  document.querySelector(`tr[data-id='${id}']`);            
+            const modalMessage = document.querySelector("#deleteConfirmStuff");
+            modalMessage.textContent = `${rowToDelete.cells[0].textContent} [${rowToDelete.cells[1].textContent}]`;
+            const modal = M.Modal.init( document.querySelector(".modal.deleteConfirm"));
+            modal.open();
+            const modalOk = document.querySelector("button.deleteConfirm");
+            modalOk.onclick = () => deleteStuff(id);
+        }
+
+
+        async function deleteStuff(id){
+            try {
+                let {affectedRows} = await fetch('/api/stuff/remove/' + id,{method:"delete"}).then(response => response.json());
+                if (affectedRows == 1) {
+                    const rowToDelete =  document.querySelector(`tr[data-id='${id}']`);            
+                    rowToDelete.remove();
+                } else if (affectedRows > 1)
+                    repopulateTable(stuff);
+            } catch (err) {
+                console.error(err);
+            }
+        }
     </script>
 
     <!-- Compiled and minified Materialize JavaScript -->
