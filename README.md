@@ -218,5 +218,31 @@ The `views/stuff.ejs` page is implemented to both use SSR for its initial layout
 
 Note that the `routes/index.ts` page utilizes a call to the database to get data for the initial SSR rendering.
 
+# Using Auth0 Roles
+
+Used the Auth0 "Authorization Extension"
+
+https://auth0.com/docs/customize/extensions/authorization-extension/use-rules-with-the-authorization-extension#add-custom-claims-to-the-issued-token
+
+After the generated rule from the configuration of the Authorization Extension, needed to add the following rule to attach the permissions/roles to the idToken
+
+```
+function (user, context, callback) {
+  var namespace = 'http://localhost:8080/claims/';
+
+  // Add the namespaced tokens. Remove any which is not necessary for your scenario
+  context.idToken[namespace + "permissions"] = user.permissions;
+  context.idToken[namespace + "roles"] = user.roles;
+  
+  callback(null, user, context);
+}
+
+```
+
+The docs mentioned to change the `scope` in the config for `express-open-id`'s auth object to include "permissions" and "roles", but it seems to not be necessary...
 
 
+```
+npm install http-errors
+npm install --save-dev @types/http-errors
+```

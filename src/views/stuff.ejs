@@ -125,7 +125,7 @@
                     const rowToDelete =  document.querySelector(`tr[data-id='${id}']`);            
                     rowToDelete.remove();
                 } else if (affectedRows > 1)
-                    repopulateTable(stuff);
+                    loadStuff();
             } catch (err) {
                 console.error(err);
             }

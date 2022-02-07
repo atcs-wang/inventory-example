@@ -1,7 +1,12 @@
-import {Router} from 'express'
+import {Router, Request} from 'express'
+import { requiresAuth } from 'express-openid-connect';
 // import { requiresAuth } from 'express-openid-connect';
 import * as db from '../db/db'
+import * as rbac from "../middleware/rbac";
+
 export const router = Router();
+
+router.use(requiresAuth())
 
 // Get the user's sub property as the id for the database
 router.use( (req: any, res, next) => {
@@ -9,7 +14,7 @@ router.use( (req: any, res, next) => {
     next();
 })
 
-router.get("/stuff/all", async (req:any, res, next) => {
+router.get("/stuff/all", async (req: any, res, next) => {
     try {
         const stuff = await db.queryPromise(`
             SELECT
@@ -27,9 +32,7 @@ router.get("/stuff/all", async (req:any, res, next) => {
     }
 });
 
-
-
-router.get("/stuff/total", (req:any, res, next) => {
+router.get("/stuff/total", (req: any, res, next) => {
 
     db.queryCallback(`
         SELECT count(*) as total
@@ -49,7 +52,7 @@ router.get("/stuff/total", (req:any, res, next) => {
 });
 
 
-router.get("/stuff/find/:search", async (req:any, res, next) => {
+router.get("/stuff/find/:search", async (req: any, res, next) => {
     try {
         const stuff = await db.queryPromise(`
             SELECT
@@ -128,3 +131,53 @@ router.get( "/tester", ( req: any, res ) => {
     const user = req.oidc ? req.oidc.user : null;
     res.render( "apiTester" , {isAuthenticated: req.oidc.isAuthenticated(), user});
 } );
+
+router.get("/users/all", rbac.checkPermission("read:users"), async (req: any, res, next) => {
+
+
+    try {
+        const users = await db.queryPromise(`
+            SELECT DISTINCT user_id
+            FROM stuff
+        `, );
+        return res.json(users);
+    } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.error(err);
+        res.json( err );
+    }
+
+});
+
+
+router.get("/users/find/:search", rbac.checkPermission("read:users"), async (req: any, res, next) => {
+    try {
+        const users = await db.queryPromise(`
+            SELECT DISTINCT user_id
+            FROM stuff
+            WHERE (user_id LIKE ?)
+        `, [req.user_id, `%${req.params.search}%`]);
+        return res.json(users);
+    } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.error(err);
+        res.json( err );
+    }
+});
+
+// TODO change permissions to delete:users
+router.delete("/users/remove/:id", rbac.checkPermission("read:users"), async (req: any, res, next) => {
+    try {
+        const results = await db.queryPromise(`
+            DELETE
+            FROM stuff
+            WHERE
+                user_id = ?
+        `, [req.user_id]);
+        return res.json({affectedRows: results.affectedRows});
+    } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.error(err);
+        res.json( err );
+    }
+})

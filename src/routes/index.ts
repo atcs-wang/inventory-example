@@ -1,12 +1,17 @@
 import * as express from "express";
 // requiresAuth allowed you to require authentication for specific routes
-import { requiresAuth } from 'express-openid-connect';
+import { requiresAuth, claimEquals, claimIncludes, claimCheck } from 'express-openid-connect';
 import {router as apiRouter} from './api'
 import * as db from '../db/db'
+import * as rbac from "../middleware/rbac";
+
+
+// function checkAuth (req : express.Request, : (claim) => ) : boolean
+
 export const register = ( app: express.Application ) => {
 
     // define a route handler for the default home page
-    app.get( "/", ( req: any, res ) => {
+    app.get( "/", ( req, res ) => {
         const user = req.oidc ? req.oidc.user : null;
         res.render( "index" , {isAuthenticated: req.oidc.isAuthenticated(), user});
     } );
@@ -38,9 +43,38 @@ export const register = ( app: express.Application ) => {
     //     res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
     // })
 
-    app.get('/profile', requiresAuth(), (req, res) => {
-        res.send(JSON.stringify(req.oidc.user));
+    app.get('/profile', requiresAuth(), claimCheck((req, claims) => {
+        // tslint:disable-next-line:no-console
+        console.log(claims);
+        return true;
+      }),
+      async (req, res, next) => {
+        try {
+            res.send(`<pre>user:  ${JSON.stringify(req.oidc.user,null, 2)}
+            \nidTokenClaims: ${JSON.stringify(req.oidc.idTokenClaims, null, 2)}<pre>`);
+        } catch(err) {
+            next(err);
+        }
+
+
       });
 
-    app.use("/api", requiresAuth() ,apiRouter);
+    app.use("/api", apiRouter);
+
+    app.use("/users", requiresAuth(), rbac.checkPermission("read:users"), async (req, res) => {
+        const user = req.oidc ? req.oidc.user : null;
+
+        try {
+            const users = await db.queryPromise(`
+                SELECT DISTINCT user_id
+                FROM stuff
+            `, );
+
+            res.render( "users" , {isAuthenticated: req.oidc.isAuthenticated(), user, users});
+        } catch (err) {
+            // tslint:disable-next-line:no-console
+            console.error(err);
+            res.json( err );
+        }
+    } );
 };

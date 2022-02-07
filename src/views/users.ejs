@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <%- include('partials/nav.ejs') %>
+    <div class="container">
+        <div id="app">
+            <div class="row" id="usersList">
+                <div class="row">
+                    <h3 class="col s4">Users list</h3>
+                    <div class="input-field col s8">
+                        <i class="material-icons prefix">search</i>
+                        <input type="text" name="search" id="search">
+                        <label for="search">Search</label>
+                    </div>
+                </div>
+                <% if (users) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i=0; i < users.length; i++) { %>
+                            <tr data-id='<%- users[i].user_id %>'>
+                            
+                                <td><%= users[i].user_id %></td>
+                                <td>
+                                    <button onclick="confirmDeleteUsers('<%- users[i].user_id %>')" class="btn-small"><i class="material-icons right">delete</i>Delete</button>
+                                </td>
+                            <% } %>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                <% }  else {%>
+                    <p>No users yet!</p>
+                <% } %>
+            </div>
+            <div class="modal deleteConfirm">
+                <div class="modal-content">
+                    <h4>Confirm delete</h4>
+                    <p>Delete <span id="deleteConfirmUsers">users</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-close btn-flat deleteConfirm">Ok</button>
+                    <button class="modal-close btn-flat">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/formFetch.js"></script>
+
+    <script>
+        function repopulateTable(users){
+            const table = document.querySelector("table");
+            table.replaceChildren(); //clear table
+            users.forEach( ({user_id}) => {
+                var row = table.insertRow(-1);
+                row.dataset.id = user_id;
+                row.insertCell(0).innerHTML = user_id;
+                row.insertCell(1).innerHTML = `<button onclick="confirmDeleteUsers('${id}')" class="btn-small"><i class="material-icons right">delete</i>Delete</button>`
+            });
+        }
+
+        async function loadUsers() {
+            try {
+                let search = document.querySelector("#search").value;
+                let endpoint =  search ? '/api/users/find/' + search : '/api/users/all' 
+                let users = await fetch(endpoint).then(response => response.json());
+                repopulateTable(users);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        
+        function confirmDeleteUsers(id) {
+            const rowToDelete =  document.querySelector(`tr[data-id='${id}']`);            
+            const modalMessage = document.querySelector("#deleteConfirmUsers");
+            modalMessage.textContent = `${rowToDelete.cells[0].textContent}`;
+            const modal = M.Modal.init( document.querySelector(".modal.deleteConfirm"));
+            modal.open();
+            const modalOk = document.querySelector("button.deleteConfirm");
+            modalOk.onclick = () => deleteUserStuff(id);
+        }
+
+        async function deleteUserStuff(id){
+            try {
+                let {affectedRows} = await fetch('/api/users/remove/' + id,{method:"delete"}).then(response => response.json());
+                if (affectedRows >= 1)
+                    loadUsers();
+                } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.querySelector("#search").addEventListener("change", loadUsers)
+    </script>
+
+    <!-- Compiled and minified Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+                
+    <!-- initialize Materialize elements -->
+    <script> M.AutoInit();</script>
+</body>
+</html>

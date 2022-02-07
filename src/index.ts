@@ -1,4 +1,5 @@
 // TypeScript prefers to use the import module syntax over require
+import createError from 'http-errors';
 import dotenv from "dotenv";
 import express from "express";
 import path from "path";
@@ -36,6 +37,12 @@ sessionAuth.register( app );
 // Configure routes
 routes.register( app );
 
+if (process.env.NODE_ENV === 'development') {
+    // catch 404 and forward to error handler
+    app.use((req, res, next) => {
+        next(createError(404));
+    });
+}
 // start the Express server
 app.listen( port, () => {
     // TypeScript doesn't like console.log in production code.
